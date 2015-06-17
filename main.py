@@ -52,7 +52,7 @@ def SearchLinks(url_list):
         keywords = ['mario','ps3','ps4','xbox','gameboy','linux','sega','brewing'] #insert your own!
         for item in keywords:
             if str(post_body).find(item) is not -1:
-                send_text(post_url)
+                send_text(post_url) + '  Found it!  ' + item
        
 
 url_list = GrabLinks()
