@@ -3,28 +3,16 @@ import urllib2
 from bs4 import BeautifulSoup
 import smtplib
 import time
+from lxml import html
+import requests
+import re
 
-craigslist_region = 'boston'
-url = 'http://' + craigslist_region + '.craigslist.org/search/gms/'
+craigslist_region = 'pittsburgh'
+url = 'http://' + craigslist_region + '.craigslist.org/search/gms'
 
 html = urllib2.urlopen(url)
 html = html.read()
 soup = BeautifulSoup(html)
-
-def send_text(message):
-    server = smtplib.SMTP( "smtp.gmail.com", 587 )
-    server.starttls()
-    server.login( '@GMAIL_USERNAME@gmail.com', 'GMAIL_PASSWORD' )
-    message = '\n' + message
-    server.sendmail( 'header', 'YOUR_ATT_PHONENUMBER@mms.att.net', message )
-    '''
-    Note: For non-AT&T customers, other popular carriers can be reached by using these:
-        T-Mobile : @tmomail.net
-        Verizon : @vtext.com
-        Sprint : @messaging.sprintpcs.com
-        Nextel : @messaging.nextel.com
-        Virgin Mobile : @vmobl.com
-    '''
 
 def GrabLinks():
     links = []
@@ -39,20 +27,26 @@ def GrabLinks():
     return links
     
 def SearchLinks(url_list):
-    url_beginning = 'http://' + craigslist_region +'.craigslist.org/'
+    url_beginning = 'http://' + craigslist_region +'.craigslist.org'
     for item in url_list:
         post_url = url_beginning + item
         post_html = urllib2.urlopen(post_url)
         post_html = BeautifulSoup(post_html.read())
-        meta_tags = post_html.find('meta')
-        post_parent = meta_tags.parent
+        section_tags = post_html.find('section')
+        post_parent = section_tags.parent
         post_parent = post_parent.contents
+
         
         post_body = post_parent[7]
-        keywords = ['mario','ps3','ps4','xbox','gameboy','linux','sega','brewing'] #insert your own!
+        keywords = ['mario','Mario','ps3','PS3','ps4','PS4','xbox','Xbox','gameboy','Gameboy','linux','Linux','sega','Sega','brewing','Brewing','books','Books','guitar','Guitar'] #insert your own!
+#This is probably better done with regex - I'll have to come back to it.
+
         for item in keywords:
             if str(post_body).find(item) is not -1:
-                send_text(post_url) + '  Found it!  ' + item
+                print(post_url) + ' I found ' + item + ' here! :D'
+# This returns an entry if something is not found. Good for troubleshooting. Uncomment if you want to see negative results as well.
+#            if str(post_body).find(item) is -1:
+#                print(post_url) + ' No ' + item + ' here. :(' 
        
 
 url_list = GrabLinks()
