@@ -9,6 +9,7 @@ import re
 
 craigslist_region = 'pittsburgh'
 url = 'http://' + craigslist_region + '.craigslist.org/search/gms'
+# Need to find a way to add on pages to this link. '?s=100' for page 2, etc.
 
 html = urllib2.urlopen(url)
 html = html.read()
